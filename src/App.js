@@ -4,12 +4,14 @@ import Notification from './components/Notification';
 import noteService from './services/notes';
 import loginService from './services/login';
 
+import LoginForm from './components/LoginForm';
+import NoteForm from './components/NoteForm';
+
 const App = () => {
 	const [notes, setNotes] = useState([]);
-	const [newNote, setNewNote] = useState('');
 	const [showAll, setShowAll] = useState(true);
 	const [errorMessage, setErrorMessage] = useState(null);
-
+	//TODO limpiar username y pass de App.js
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [user, setUser] = useState(null);
@@ -36,18 +38,12 @@ const App = () => {
 		localStorage.removeItem('loggedNoteAppUser');
 	};
 
-	const addNote = (event) => {
-		event.preventDefault();
-		const noteObject = {
-			content: newNote,
-			important: Math.random() > 0.5,
-		};
+	const addNote = (noteObject) => {			
     
 		noteService
 			.create(noteObject)
 			.then((returnedNote) => {
 				setNotes(notes.concat(returnedNote));
-				setNewNote('');
 			});
 	};
 
@@ -70,9 +66,7 @@ const App = () => {
 			});
 	};
 
-	const handleNoteChange = (event) => {
-		setNewNote(event.target.value);
-	};
+
 
 	const handleLogin = async (event) => {
 		event.preventDefault();
@@ -102,51 +96,23 @@ const App = () => {
 
 	const notesToShow = showAll ? notes : notes.filter((note) => note.important);
   
-	const renderLoginForm = () =>( 
-		<form onSubmit={handleLogin}>
-			<div>
-				<input
-					type="text"
-					value={username}
-					name="Username"
-					onChange={(event) => setUsername(event.target.value)}
-				/>
-			</div>
-			<div>
-				<input
-					type="password"
-					value={password}
-					name="Password"
-					onChange={(event) => setPassword(event.target.value)}
-				/>
-			</div>
-			<button>Login</button>
-		</form>);
-  
-	const renderCreateNoteForm = () =>( 
-		<>
-			<div>
-				<button onClick={handleLogOut}>Logout</button>
-			</div>
-			
-			<form onSubmit={addNote}>
-				<input 
-					placeholder='Write a note'
-					value={newNote} 
-					onChange={handleNoteChange} 
-				/>
-				<button type="submit">save</button>
-			</form></>);
-  
-
 	return (
 		<div>
 			<h1>Notes</h1>
 			<Notification message={errorMessage} />
 			{
-				user === null
-					? renderLoginForm()
-					: renderCreateNoteForm()
+				user 
+					? <NoteForm
+						handleLogOut={handleLogOut}
+						addNote={addNote}
+					/> 
+					: <LoginForm
+						username={username}
+						password={password}
+						handleUsernameChange={(event) => setUsername(event.target.value)}
+						handlePasswordChange={(event) => setPassword(event.target.value)}
+						handleSubmit={handleLogin}
+					/>
 			}
 
 			<div>
