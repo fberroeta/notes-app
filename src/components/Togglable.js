@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import PropTypes from 'prop-types';
-
-const Toggable = forwardRef(({children, buttonLabel}, ref) => {
+import i18n from '../i18n/index';
+const Togglable = forwardRef(({children, buttonLabel}, ref) => {
 	const [visible, setVisible] = useState(false);
 
 	//Renderizar elementos pero ocultarlos
@@ -17,23 +17,23 @@ const Toggable = forwardRef(({children, buttonLabel}, ref) => {
 	});
 
 	return (
-		<div>
+		<div data-testid='Togglable'>
 			<div style={hideWhenVisible}>
 				<button onClick={toggleVisibility}>{ buttonLabel }</button>
 			</div>
 
 			<div style={showWhenVisible}>
 				{children}	
-				<button onClick={toggleVisibility}>Cancel</button>
+				<button onClick={toggleVisibility}>{i18n.TOGGLABLE.CANCEL_BUTTON}</button>
 			</div>
 		</div>
 	);
 });
 
-Toggable.displayName = 'Toggable';
+Togglable.displayName = 'Togglable';
 
-Toggable.propTypes = {
+Togglable.propTypes = {
 	buttonLabel : PropTypes.string.isRequired
 
 };
-export default Toggable;
+export default Togglable;
